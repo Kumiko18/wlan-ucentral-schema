@@ -1,6 +1,7 @@
 {% if (!services.is_present("dhcpinject")) return %}
 {% let ssids = services.lookup_ssids("dhcpinject") %}
 {% let enable = length(ssids) %}
+{% let iface_count = 0 %}
 {% services.set_enabled("dhcpinject", enable) %}
 {% 
 
@@ -24,5 +25,9 @@ add_list dhcpinject.uplink.port={{ port }}
 
 set dhcpinject.ssids=ssids
 {% for (let ssid in ssids): %}
+{%   iface_count += ssid.wifi_bands.length %}
 add_list dhcpinject.ssids.ssid={{ s(ssid.name) }}
 {% endfor %}
+
+set dhcpinject.dhcpinject=dhcpinject
+set dhcpinject.dhcpinject.ssid_count={{ iface_count }}
